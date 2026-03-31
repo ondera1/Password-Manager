@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/pm.dir/Crypto.cpp.o CMakeFiles/pm.dir/crypto_kdf.cpp.o CMakeFiles/pm.dir/Password_Manager.cpp.o -o pm  /usr/lib/x86_64-linux-gnu/libcrypto.so 

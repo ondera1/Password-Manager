@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build",
+  "command": "/usr/bin/c++   -g -std=gnu++17 -o CMakeFiles/pm.dir/Crypto.cpp.o -c \"/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/Crypto.cpp\"",
+  "file": "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/Crypto.cpp",
+  "output": "CMakeFiles/pm.dir/Crypto.cpp.o"
+},
+{
+  "directory": "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build",
+  "command": "/usr/bin/c++   -g -std=gnu++17 -o CMakeFiles/pm.dir/crypto_kdf.cpp.o -c \"/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/crypto_kdf.cpp\"",
+  "file": "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/crypto_kdf.cpp",
+  "output": "CMakeFiles/pm.dir/crypto_kdf.cpp.o"
+},
+{
+  "directory": "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build",
+  "command": "/usr/bin/c++   -g -std=gnu++17 -o CMakeFiles/pm.dir/Password_Manager.cpp.o -c \"/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/Password Manager.cpp\"",
+  "file": "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/Password Manager.cpp",
+  "output": "CMakeFiles/pm.dir/Password_Manager.cpp.o"
+}
+]
