@@ -5,5 +5,16 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(OpenSSL REQUIRED)
 
-add_executable(pm Crypto.cpp crypto_kdf.cpp "Password Manager.cpp")
+add_executable(pm 
+	../src/cli.cpp
+	../src/database.cpp
+	../Password\ Manager/db_crypto.cpp
+)
+
+target_include_directories(pm PRIVATE
+	../src
+	../Password\ Manager
+	
+)
+
 target_link_libraries(pm PRIVATE OpenSSL::Crypto)

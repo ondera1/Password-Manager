@@ -6,3 +6,7 @@
 #include <algorithm>
 
 #include "db_crypto.h"
+#include "nlohmann/json.hpp"
+
+
+using nlohman::json;
