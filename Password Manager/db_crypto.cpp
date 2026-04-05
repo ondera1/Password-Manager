@@ -55,7 +55,7 @@ static std::vector<uint8_t> pbkdf2_sha256_key_32(
     std::vector<uint8_t> key(32);
 
     // Funkce PKCS5_PBKDF2_HMAC vrací 1 při úspěchu, 0 při chybě. V případě chyby vyhodíme vyjímku, protože bez správného klíče nemůžeme pokračovat.
-    // Výstup této metody je klíč o délce 32 baajtů. 
+    // Výstup této metody je klíč o délce 32 bajtů. 
     int ok = PKCS5_PBKDF2_HMAC(
         masterPassword.c_str(),
         (int)masterPassword.size(),
