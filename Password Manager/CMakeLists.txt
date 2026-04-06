@@ -6,14 +6,16 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(OpenSSL REQUIRED)
 
 add_executable(pm 
-	../src/cli.cpp
-	../src/database.cpp
-	../Password\ Manager/db_crypto.cpp
+	#../src/cli.cpp
+	src/database.cpp
+	db_crypto.cpp
+	crypto_gcm.cpp
 )
 
 target_include_directories(pm PRIVATE
-	../src
-	../Password\ Manager
+	src
+	.
+	json/include
 	
 )
 
