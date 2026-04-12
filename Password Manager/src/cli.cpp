@@ -1,213 +1,193 @@
 #include <iostream>
 #include <string>
-#include <vector>
-#include <stdexcept>
-#include <fstream>
+#include <limits>
 
 #include "database.h"
 #include "password_generator.h"
 
-static void usage() {
-    std::cout
-        << "Password Manager (MVP)\n"
-        << "Usage:\n"
-        << "  pm init <db_path>\n"
-        << "  pm add  <db_path> <service> <username> <password> [note]\n"
-        << "  pm list <db_path>\n"
-        << "  pm find <db_path> <needle>\n"
-        << "  pm rm   <db_path> <service>\n"
-        << "  pm export <db_path> <out_json_path>\n"
-        << "  pm import <db_path> <in_json_path>\n"
-        << "  pm gen <length> [symbols yes|no] [ambiguous yes|no]\n";
+static std::string prompt_line(const std::string& label) {
+    std::string s;
+    std::cout << label;
+    std::getline(std::cin, s);
+    return s;
 }
 
 static std::string prompt_master_password() {
-    std::string pw;
-    std::cout << "Master password: ";
-    std::getline(std::cin, pw);
-    return pw;
+    return prompt_line("Master password: ");
 }
 
-static std::string read_text_file(const std::string& path) {
-    std::ifstream f(path);
-    if (!f) throw std::runtime_error("Cannot open file: " + path);
-    return std::string((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+static void print_menu() {
+    std::cout << "\n=== Password Manager ===\n"
+              << "1) List entries\n"
+              << "2) Add entry\n"
+              << "3) Find entries\n"
+              << "4) Remove entry\n"
+              << "5) Generate password\n"
+              << "6) Save\n"
+              << "7) Lock (re-enter master password)\n"
+              << "8) Exit\n"
+              << "Choice: ";
 }
 
-static void write_text_file(const std::string& path, const std::string& text) {
-    std::ofstream f(path, std::ios::trunc);
-    if (!f) throw std::runtime_error("Cannot open file for writing: " + path);
-    f << text;
-    if (!f) throw std::runtime_error("Failed writing: " + path);
+static void list_entries(const Database& db) {
+    const auto& es = db.entries();
+    if (es.empty()) {
+        std::cout << "(No entries)\n";
+        return;
+    }
+
+    for (size_t i = 0; i < es.size(); ++i) {
+        std::cout << i + 1 << ") "
+                  << es[i].service << " | "
+                  << es[i].username;
+        if (!es[i].note.empty()) std::cout << " | note: " << es[i].note;
+        std::cout << "\n";
+    }
 }
 
-int main(int argc, char** argv) {
+static void add_entry(Database& db) {
+    Entry e;
+    e.service  = prompt_line("Service: ");
+    e.username = prompt_line("Username: ");
+
+    std::string mode = prompt_line("Password mode [manual/gen]: ");
+    if (mode == "gen") {
+        PasswordPolicy p;
+        std::string lenStr = prompt_line("Length (default 20): ");
+        if (!lenStr.empty()) p.length = static_cast<size_t>(std::stoul(lenStr));
+
+        std::string sym = prompt_line("Use symbols? [yes/no, default yes]: ");
+        if (!sym.empty()) p.useSymbols = (sym == "yes" || sym == "y" || sym == "1" || sym == "true");
+
+        e.password = generate_password(p);
+        std::cout << "Generated password: " << e.password << "\n";
+    } else {
+        e.password = prompt_line("Password: ");
+    }
+
+    e.note = prompt_line("Note (optional): ");
+
+    db.add(e);
+    std::cout << "Entry saved in memory (remember to Save).\n";
+}
+
+static void find_entries(Database& db) {
+    std::string needle = prompt_line("Find service contains: ");
+    auto found = db.find_service_contains(needle);
+
+    if (found.empty()) {
+        std::cout << "No results.\n";
+        return;
+    }
+
+    for (const auto& e : found) {
+        std::cout << "- " << e.service << " | " << e.username
+                  << " | password: " << e.password;
+        if (!e.note.empty()) std::cout << " | note: " << e.note;
+        std::cout << "\n";
+    }
+}
+
+static void remove_entry(Database& db) {
+    std::string service = prompt_line("Service to remove: ");
+    if (db.remove_by_service(service)) {
+        std::cout << "Removed (in memory). Remember to Save.\n";
+    } else {
+        std::cout << "Service not found.\n";
+    }
+}
+
+int main() {
     try {
-        if (argc < 2) {
-            usage();
-            return 1;
-        }
-
-        std::string cmd = argv[1];
         Database db;
         DatabaseConfig cfg;
 
-        // -------- password generator --------
-        if (cmd == "gen") {
-            if (argc < 3) {
-                usage();
-                return 1;
-            }
+        cfg.db_path = prompt_line("DB path [default passwords.pmdb]: ");
+        if (cfg.db_path.empty()) cfg.db_path = "passwords.pmdb";
 
-            PasswordPolicy p;
-            p.length = static_cast<std::size_t>(std::stoul(argv[2]));
+        std::string master = prompt_master_password();
 
-            if (argc >= 4) {
-                std::string v = argv[3];
-                p.useSymbols = (v == "yes" || v == "1" || v == "true");
-            }
-
-            if (argc >= 5) {
-                std::string v = argv[4];
-                bool allowAmbiguous = (v == "yes" || v == "1" || v == "true");
-                p.excludeAmbiguous = !allowAmbiguous;
-            }
-
-            std::cout << generate_password(p) << "\n";
-            return 0;
-        }
-
-        // commands below all need db_path
-        if (argc < 3) {
-            usage();
-            return 1;
-        }
-        cfg.db_path = argv[2];
-
-        // -------- init --------
-        if (cmd == "init") {
-            std::string master = prompt_master_password();
-            db.init_new(cfg, master);
-            std::cout << "Initialized DB: " << cfg.db_path << "\n";
-            return 0;
-        }
-
-        // -------- add --------
-        if (cmd == "add") {
-            if (argc < 6) {
-                usage();
-                return 1;
-            }
-
-            Entry e;
-            e.service = argv[3];
-            e.username = argv[4];
-            e.password = argv[5];
-            if (argc >= 7) e.note = argv[6];
-
-            std::string master = prompt_master_password();
+        // attempt load; if fail, offer init
+        try {
             db.load(cfg, master);
-            db.add(e);
-            db.save(cfg, master);
-
-            std::cout << "Saved entry for service: " << e.service << "\n";
-            return 0;
-        }
-
-        // -------- list --------
-        if (cmd == "list") {
-            std::string master = prompt_master_password();
-            db.load(cfg, master);
-
-            for (const auto& e : db.entries()) {
-                std::cout << "- " << e.service << " | " << e.username;
-                if (!e.note.empty()) std::cout << " | note: " << e.note;
-                std::cout << "\n";
-            }
-            return 0;
-        }
-
-        // -------- find --------
-        if (cmd == "find") {
-            if (argc < 4) {
-                usage();
+            std::cout << "DB loaded.\n";
+        } catch (const std::exception& e) {
+            std::cout << "Load failed: " << e.what() << "\n";
+            std::string createNew = prompt_line("Create new DB here? [yes/no]: ");
+            if (createNew == "yes" || createNew == "y") {
+                db.init_new(cfg, master);
+                std::cout << "New DB initialized.\n";
+            } else {
+                std::cout << "Exiting.\n";
                 return 1;
             }
-            std::string needle = argv[3];
-
-            std::string master = prompt_master_password();
-            db.load(cfg, master);
-
-            auto found = db.find_service_contains(needle);
-            for (const auto& e : found) {
-                std::cout << "- " << e.service << " | " << e.username << " | " << e.password;
-                if (!e.note.empty()) std::cout << " | note: " << e.note;
-                std::cout << "\n";
-            }
-            return 0;
         }
 
-        // -------- rm --------
-        if (cmd == "rm") {
-            if (argc < 4) {
-                usage();
-                return 1;
+        while (true) {
+            print_menu();
+
+            int choice = 0;
+            if (!(std::cin >> choice)) {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "Invalid input.\n";
+                continue;
             }
-            std::string service = argv[3];
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-            std::string master = prompt_master_password();
-            db.load(cfg, master);
-
-            bool removed = db.remove_by_service(service);
-            if (!removed) {
-                std::cout << "No such service: " << service << "\n";
-                return 2;
+            switch (choice) {
+                case 1:
+                    list_entries(db);
+                    break;
+                case 2:
+                    add_entry(db);
+                    break;
+                case 3:
+                    find_entries(db);
+                    break;
+                case 4:
+                    remove_entry(db);
+                    break;
+                case 5: {
+                    PasswordPolicy p;
+                    std::string lenStr = prompt_line("Length (default 20): ");
+                    if (!lenStr.empty()) p.length = static_cast<size_t>(std::stoul(lenStr));
+                    std::string sym = prompt_line("Use symbols? [yes/no, default yes]: ");
+                    if (!sym.empty()) p.useSymbols = (sym == "yes" || sym == "y" || sym == "1" || sym == "true");
+                    std::string pass = generate_password(p);
+                    std::cout << "Generated password: " << pass << "\n";
+                    break;
+                }
+                case 6:
+                    db.save(cfg, master);
+                    std::cout << "Saved.\n";
+                    break;
+                case 7: {
+                    // lock: forget db in memory and ask master again
+                    db = Database{};
+                    std::string newMaster = prompt_master_password();
+                    db.load(cfg, newMaster); // throws if wrong
+                    master = std::move(newMaster);
+                    std::cout << "Unlocked.\n";
+                    break;
+                }
+                case 8: {
+                    std::string save = prompt_line("Save before exit? [yes/no]: ");
+                    if (save == "yes" || save == "y") {
+                        db.save(cfg, master);
+                        std::cout << "Saved.\n";
+                    }
+                    std::cout << "Bye.\n";
+                    return 0;
+                }
+                default:
+                    std::cout << "Unknown choice.\n";
+                    break;
             }
-
-            db.save(cfg, master);
-            std::cout << "Removed: " << service << "\n";
-            return 0;
         }
-
-        // -------- export --------
-        if (cmd == "export") {
-            if (argc < 4) {
-                usage();
-                return 1;
-            }
-            std::string outPath = argv[3];
-
-            std::string master = prompt_master_password();
-            db.load(cfg, master);
-
-            write_text_file(outPath, db.export_json_pretty());
-            std::cout << "Exported plaintext JSON to: " << outPath << "\n";
-            return 0;
-        }
-
-        // -------- import --------
-        if (cmd == "import") {
-            if (argc < 4) {
-                usage();
-                return 1;
-            }
-            std::string inPath = argv[3];
-
-            std::string jsonText = read_text_file(inPath);
-            db.import_json(jsonText);
-
-            std::string master = prompt_master_password();
-            db.save(cfg, master);
-
-            std::cout << "Imported JSON into encrypted DB: " << cfg.db_path << "\n";
-            return 0;
-        }
-
-        usage();
-        return 1;
 
     } catch (const std::exception& e) {
-        std::cerr << "ERROR: " << e.what() << "\n";
+        std::cerr << "FATAL: " << e.what() << "\n";
         return 1;
     }
 }
