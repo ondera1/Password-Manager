@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/ondera1/cpp/PasswordManager/Password-Manager/Password Manager/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ondera1/cpp/PasswordManager/Password-Manager/Password Manager/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
