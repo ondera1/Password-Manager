@@ -133,3 +133,52 @@ void Database::init_new(const DatabaseConfig& cfg, const std::string& masterPass
     _entries.clear();
     save(cfg, masterPassword);
 }
+
+
+void Database::save(const DatabaseConfig& config, const std::string& masterPassword) const {
+    std::string jsonText = export_json_pretty();
+    std::vector<uint8_t> plaintextBytes(jsonText.begin(), jsonText.end());
+
+    std::vector<uint8_t> encryptedBytes = encrypt_db(masterPassword, plaintextBytes, config.pbkdf2Iterations);
+
+    write_all_bytes_atomic(config.db_path, encryptedBytes);
+}
+
+
+
+void Database::add(const Entry& e) {
+    auto it = std::find_if(_entries.begin(), _entries.end(), [&](const Entry& existing) {
+        return existing.service == e.service;
+    });
+
+    if (it != _entries.end()) {
+        *it = e; 
+    } else {
+        _entries.push_back(e); 
+    }
+}
+
+
+
+bool Database::remove_by_service(const std::string& service) {
+    auto it = std::remove_if(_entries.begin(), _entries.end(), [&](const Entry& e) {
+        return e.service == service;
+    });
+
+    if (it != _entries.end()) {
+        _entries.erase(it, _entries.end());
+        return true;
+    }
+    return false;
+}
+
+
+std::vector<Entry> Database::find_service_contains(const std::string& substring) {
+    std::vector<Entry> results;
+    for (const auto& e : _entries) {
+        if (e.service.find(substring) != std::string::npos) {
+            results.push_back(e);
+        }
+    }
+    return results;
+}

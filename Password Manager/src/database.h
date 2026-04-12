@@ -17,10 +17,10 @@ public:
 
 	void init_new(const DatabaseConfig& cfg, const std::string& masterPassword);
 
-	void save(const DatabaseConfig& config, const std::string& masterPassword);
+	void save(const DatabaseConfig& config, const std::string& masterPassword) const;
 
 	// CRUD operace
-	void add(Entry e);
+	void add(const Entry& e);
 
 	bool remove_by_service(const std::string& service);
 	std::vector<Entry> find_service_contains(const std::string& substring);
