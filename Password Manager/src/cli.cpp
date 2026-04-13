@@ -1,6 +1,10 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include <thread>
+#include <atomic>
+#include <mutex>
+#include <chrono>
 
 #include "database.h"
 #include "password_generator.h"
@@ -97,6 +101,33 @@ static void remove_entry(Database& db) {
     }
 }
 
+std::mutex mtx;
+std::atomic<bool> running{true};
+std::atomic<bool> locked{false};
+
+auto last_activity = std::chrono::steady_clock::now();
+const auto timeout = std::chrono::seconds(10);
+
+auto touch_activity = [&]() {
+
+    std::lock_guard<std::mutex> lock(mtx);
+    last_activity = std::chrono::steady_clock::now();
+};
+
+std::thread idleWatcher([&]() {
+    while (running) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::lock_guard<std::mutex> lock(mtx);
+        if (!locked && std::chrono::steady_clock::now() - last_activity > timeout) {
+            locked = true;
+        }
+    }
+});
+
+
+
+
+
 int main() {
     try {
         Database db;
@@ -134,6 +165,26 @@ int main() {
                 continue;
             }
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            if (locked.load()) {
+                std::cout << "Session locked due to inactivity. Please re-enter master password.\n";
+                db = Database{}; // clear from memory
+
+                std::string newMaster = prompt_master_password();
+                try {
+                db.load(cfg, newMaster); 
+                master = std::move(newMaster);
+
+                locked.store(false);
+                touch_activity();
+                std::cout << "Unlocked.\n";
+                }
+                catch (const std::exception& e) {
+                    std::cout << "Failed to unlock: " << e.what() << "\n";
+                    continue;
+                }
+            }
+
 
             switch (choice) {
                 case 1:
@@ -178,12 +229,17 @@ int main() {
                         std::cout << "Saved.\n";
                     }
                     std::cout << "Bye.\n";
+
+                    running.store(false);
+                    if (idleWatcher.joinable()) idleWatcher.join();
+
                     return 0;
                 }
                 default:
                     std::cout << "Unknown choice.\n";
                     break;
             }
+            touch_activity();
         }
 
     } catch (const std::exception& e) {
