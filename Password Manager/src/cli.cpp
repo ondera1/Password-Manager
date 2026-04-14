@@ -106,15 +106,15 @@ std::atomic<bool> running{true};
 std::atomic<bool> locked{false};
 
 auto last_activity = std::chrono::steady_clock::now();
-const auto timeout = std::chrono::seconds(10);
+const auto timeout = std::chrono::minutes(5);
 
-auto touch_activity = [&]() {
+auto touch_activity = []() {
 
     std::lock_guard<std::mutex> lock(mtx);
     last_activity = std::chrono::steady_clock::now();
 };
 
-std::thread idleWatcher([&]() {
+std::thread idleWatcher([]() {
     while (running) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
         std::lock_guard<std::mutex> lock(mtx);

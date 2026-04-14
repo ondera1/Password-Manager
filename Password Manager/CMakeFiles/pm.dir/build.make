@@ -56,7 +56,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build"
+CMAKE_BINARY_DIR = "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager"
 
 # Include any dependencies generated for this target.
 include CMakeFiles/pm.dir/depend.make
@@ -70,9 +70,9 @@ include CMakeFiles/pm.dir/progress.make
 include CMakeFiles/pm.dir/flags.make
 
 CMakeFiles/pm.dir/src/cli.cpp.o: CMakeFiles/pm.dir/flags.make
-CMakeFiles/pm.dir/src/cli.cpp.o: /home/ondera1/Desktop/C++/manager/Password-Manager/Password\ Manager/src/cli.cpp
+CMakeFiles/pm.dir/src/cli.cpp.o: src/cli.cpp
 CMakeFiles/pm.dir/src/cli.cpp.o: CMakeFiles/pm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/pm.dir/src/cli.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/pm.dir/src/cli.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/pm.dir/src/cli.cpp.o -MF CMakeFiles/pm.dir/src/cli.cpp.o.d -o CMakeFiles/pm.dir/src/cli.cpp.o -c "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/src/cli.cpp"
 
 CMakeFiles/pm.dir/src/cli.cpp.i: cmake_force
@@ -84,9 +84,9 @@ CMakeFiles/pm.dir/src/cli.cpp.s: cmake_force
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/src/cli.cpp" -o CMakeFiles/pm.dir/src/cli.cpp.s
 
 CMakeFiles/pm.dir/src/database.cpp.o: CMakeFiles/pm.dir/flags.make
-CMakeFiles/pm.dir/src/database.cpp.o: /home/ondera1/Desktop/C++/manager/Password-Manager/Password\ Manager/src/database.cpp
+CMakeFiles/pm.dir/src/database.cpp.o: src/database.cpp
 CMakeFiles/pm.dir/src/database.cpp.o: CMakeFiles/pm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/pm.dir/src/database.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/pm.dir/src/database.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/pm.dir/src/database.cpp.o -MF CMakeFiles/pm.dir/src/database.cpp.o.d -o CMakeFiles/pm.dir/src/database.cpp.o -c "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/src/database.cpp"
 
 CMakeFiles/pm.dir/src/database.cpp.i: cmake_force
@@ -98,9 +98,9 @@ CMakeFiles/pm.dir/src/database.cpp.s: cmake_force
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/src/database.cpp" -o CMakeFiles/pm.dir/src/database.cpp.s
 
 CMakeFiles/pm.dir/db_crypto.cpp.o: CMakeFiles/pm.dir/flags.make
-CMakeFiles/pm.dir/db_crypto.cpp.o: /home/ondera1/Desktop/C++/manager/Password-Manager/Password\ Manager/db_crypto.cpp
+CMakeFiles/pm.dir/db_crypto.cpp.o: db_crypto.cpp
 CMakeFiles/pm.dir/db_crypto.cpp.o: CMakeFiles/pm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/pm.dir/db_crypto.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/pm.dir/db_crypto.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/pm.dir/db_crypto.cpp.o -MF CMakeFiles/pm.dir/db_crypto.cpp.o.d -o CMakeFiles/pm.dir/db_crypto.cpp.o -c "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/db_crypto.cpp"
 
 CMakeFiles/pm.dir/db_crypto.cpp.i: cmake_force
@@ -112,9 +112,9 @@ CMakeFiles/pm.dir/db_crypto.cpp.s: cmake_force
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/db_crypto.cpp" -o CMakeFiles/pm.dir/db_crypto.cpp.s
 
 CMakeFiles/pm.dir/crypto_gcm.cpp.o: CMakeFiles/pm.dir/flags.make
-CMakeFiles/pm.dir/crypto_gcm.cpp.o: /home/ondera1/Desktop/C++/manager/Password-Manager/Password\ Manager/crypto_gcm.cpp
+CMakeFiles/pm.dir/crypto_gcm.cpp.o: crypto_gcm.cpp
 CMakeFiles/pm.dir/crypto_gcm.cpp.o: CMakeFiles/pm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/pm.dir/crypto_gcm.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/pm.dir/crypto_gcm.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/pm.dir/crypto_gcm.cpp.o -MF CMakeFiles/pm.dir/crypto_gcm.cpp.o.d -o CMakeFiles/pm.dir/crypto_gcm.cpp.o -c "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/crypto_gcm.cpp"
 
 CMakeFiles/pm.dir/crypto_gcm.cpp.i: cmake_force
@@ -126,9 +126,9 @@ CMakeFiles/pm.dir/crypto_gcm.cpp.s: cmake_force
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/crypto_gcm.cpp" -o CMakeFiles/pm.dir/crypto_gcm.cpp.s
 
 CMakeFiles/pm.dir/src/password_generator.cpp.o: CMakeFiles/pm.dir/flags.make
-CMakeFiles/pm.dir/src/password_generator.cpp.o: /home/ondera1/Desktop/C++/manager/Password-Manager/Password\ Manager/src/password_generator.cpp
+CMakeFiles/pm.dir/src/password_generator.cpp.o: src/password_generator.cpp
 CMakeFiles/pm.dir/src/password_generator.cpp.o: CMakeFiles/pm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/pm.dir/src/password_generator.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/pm.dir/src/password_generator.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/pm.dir/src/password_generator.cpp.o -MF CMakeFiles/pm.dir/src/password_generator.cpp.o.d -o CMakeFiles/pm.dir/src/password_generator.cpp.o -c "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/src/password_generator.cpp"
 
 CMakeFiles/pm.dir/src/password_generator.cpp.i: cmake_force
@@ -158,7 +158,7 @@ pm: CMakeFiles/pm.dir/src/password_generator.cpp.o
 pm: CMakeFiles/pm.dir/build.make
 pm: /usr/lib/x86_64-linux-gnu/libcrypto.so
 pm: CMakeFiles/pm.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable pm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable pm"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/pm.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -170,6 +170,6 @@ CMakeFiles/pm.dir/clean:
 .PHONY : CMakeFiles/pm.dir/clean
 
 CMakeFiles/pm.dir/depend:
-	cd "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build" && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager" "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager" "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build" "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build" "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/build/CMakeFiles/pm.dir/DependInfo.cmake" "--color=$(COLOR)"
+	cd "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager" && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager" "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager" "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager" "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager" "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/CMakeFiles/pm.dir/DependInfo.cmake" "--color=$(COLOR)"
 .PHONY : CMakeFiles/pm.dir/depend
 

@@ -1,4 +1,4 @@
-# Install script for directory: /home/ondera1/cpp/PasswordManager/Password-Manager/Password Manager
+# Install script for directory: /home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/ondera1/cpp/PasswordManager/Password-Manager/Password Manager/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

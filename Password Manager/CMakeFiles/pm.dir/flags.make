@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I"/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/src" -I"/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/." -I"/home/ondera1/Desktop/C++/manager/Password-Manager/Password Manager/json/include"
 
-CXX_FLAGS = -g -std=gnu++17
+CXX_FLAGS = -std=gnu++17
 
