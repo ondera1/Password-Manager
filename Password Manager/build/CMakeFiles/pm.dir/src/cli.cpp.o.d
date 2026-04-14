@@ -167,6 +167,7 @@ CMakeFiles/pm.dir/src/cli.cpp.o: \
  /usr/include/c++/13/vector /usr/include/c++/13/bits/stl_uninitialized.h \
  /usr/include/c++/13/bits/stl_vector.h \
  /usr/include/c++/13/bits/stl_bvector.h \
- /usr/include/c++/13/bits/vector.tcc \
+ /usr/include/c++/13/bits/vector.tcc /usr/include/c++/13/optional \
+ /usr/include/c++/13/bits/enable_special_members.h \
  /home/ondera1/Desktop/C++/manager/Password-Manager/Password\ Manager/src/entry.h \
  /home/ondera1/Desktop/C++/manager/Password-Manager/Password\ Manager/src/password_generator.h

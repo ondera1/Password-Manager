@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <optional>
 
 #include "entry.h"
 
@@ -21,9 +22,14 @@ public:
 
 	// CRUD operace
 	void add(const Entry& e);
+	void add_or_replace(const Entry& e);
 
 	bool remove_by_service(const std::string& service);
+	bool remove(const std::string& service, const std::string& username);
+	bool update(const std::string& service, const std::string& username, const Entry& updated);
+
 	std::vector<Entry> find_service_contains(const std::string& substring);
+	std::optional<Entry> find_exact(const std::string& service, const std::string& username) const;
 
 	const std::vector<Entry>& entries() const { return _entries; }
 
