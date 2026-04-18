@@ -182,3 +182,54 @@ std::vector<Entry> Database::find_service_contains(const std::string& substring)
     }
     return results;
 }
+
+void Database::add_or_replace(const Entry& e) {
+    auto it = std::find_if(_entries.begin(), _entries.end(), [&](const Entry& existing) {
+        return existing.service == e.service && existing.username == e.username;
+    });
+
+    if (it != _entries.end()) {
+        *it = e; 
+    } else {
+        _entries.push_back(e); 
+    }
+}
+
+bool Database::remove(const std::string& service, const std::string& username) {
+    auto it = std::remove_if(_entries.begin(), _entries.end(), [&](const Entry& e) {
+        return e.service == service && e.username == username;
+    });
+
+    if (it != _entries.end()) {
+        _entries.erase(it, _entries.end());
+        return true;
+    }
+    return false;
+}
+
+bool Database::update(const std::string& service, const std::string& username, const Entry& updated) {
+    auto it = std::find_if(_entries.begin(), _entries.end(), [&](const Entry& e) {
+        return e.service == service && e.username == username;
+    });
+
+    if (it == _entries.end()) {
+        return false;
+    }
+    it->username = updated.username;
+    it->password = updated.password;
+    it->note = updated.note;
+    return true;
+}
+
+
+
+std::optional<Entry> Database::find_exact(const std::string& service, const std::string& username) const {
+    auto it = std::find_if(_entries.begin(), _entries.end(), [&](const Entry& e) {
+        return e.service == service && e.username == username;
+    });
+
+    if (it != _entries.end()) {
+        return *it;
+    }
+    return std::nullopt;
+}

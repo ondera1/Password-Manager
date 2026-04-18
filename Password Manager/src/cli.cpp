@@ -5,9 +5,33 @@
 #include <atomic>
 #include <mutex>
 #include <chrono>
+#include <thread>
+#include <atomic>
+#include <mutex>
+#include <optional>
 
 #include "database.h"
 #include "password_generator.h"
+#include "config.h"
+
+//// Thread
+
+std::thread saveThread;
+std::atomic<bool> saveInProgress{false};
+std::atomic<bool> saveDone{false};
+std::atomic<bool> saveOk{false};
+std::string saveError;
+std::mutex saveErrMtx;
+
+
+
+
+
+////// --- CLI logic
+
+
+
+
 
 static std::string prompt_line(const std::string& label) {
     std::string s;
@@ -24,12 +48,13 @@ static void print_menu() {
     std::cout << "\n=== Password Manager ===\n"
               << "1) List entries\n"
               << "2) Add entry\n"
-              << "3) Find entries\n"
-              << "4) Remove entry\n"
-              << "5) Generate password\n"
-              << "6) Save\n"
-              << "7) Lock (re-enter master password)\n"
-              << "8) Exit\n"
+              << "3) Edit entry\n"
+              << "4) Find entries\n"
+              << "5) Remove entry\n"
+              << "6) Generate password\n"
+              << "7) Save\n"
+              << "8) Lock (re-enter master password)\n"
+              << "9) Exit\n"
               << "Choice: ";
 }
 
@@ -125,6 +150,58 @@ std::thread idleWatcher([]() {
 });
 
 
+static void edit_entry(Database& db) {
+    std::string service = prompt_line("Service: ");
+    std::string username = prompt_line("Current username: ");
+
+    auto existing = db.find_exact(service, username);
+    if (!existing.has_value()) {
+        std::cout << "Entry not found.\n";
+        return;
+    }
+
+    Entry updated = existing.value();
+
+    // --- username
+    std::string newUsername = prompt_line("New username (empty = keep): ");
+    if (!newUsername.empty() && newUsername != username) {
+        // kolizní kontrola: nesmí existovat (service + newUsername)
+        if (db.find_exact(service, newUsername).has_value()) {
+            std::cout << "Cannot rename: entry with this service+username already exists.\n";
+            return;
+        }
+        updated.username = newUsername;
+    }
+
+    // --- password
+    std::string mode = prompt_line("New password mode [keep/manual/gen] (default keep): ");
+    if (mode == "manual") {
+        updated.password = prompt_line("New password: ");
+    } else if (mode == "gen") {
+        PasswordPolicy p;
+        std::string lenStr = prompt_line("Length (default 20): ");
+        if (!lenStr.empty()) p.length = static_cast<size_t>(std::stoul(lenStr));
+
+        std::string sym = prompt_line("Use symbols? [yes/no, default yes]: ");
+        if (!sym.empty()) p.useSymbols = (sym == "yes" || sym == "y" || sym == "1" || sym == "true");
+
+        updated.password = generate_password(p);
+        std::cout << "Generated password: " << updated.password << "\n";
+    } // keep => nic
+
+    // --- note
+    std::string note = prompt_line("New note (empty = keep, single '-' = clear): ");
+    if (note == "-") updated.note.clear();
+    else if (!note.empty()) updated.note = note;
+
+    if (!db.update(service, username, updated)) {
+        std::cout << "Update failed.\n";
+        return;
+    }
+
+    std::cout << "Updated in memory (remember to Save).\n";
+}
+
 
 
 
@@ -132,6 +209,10 @@ int main() {
     try {
         Database db;
         DatabaseConfig cfg;
+
+        AppConfig appCfg = load_config_or_create_default("config.json");
+        cfg.db_path = appCfg.db_path;
+        cfg.pbkdf2Iterations = appCfg.pbkdf2_iterations;
 
         cfg.db_path = prompt_line("DB path [default passwords.pmdb]: ");
         if (cfg.db_path.empty()) cfg.db_path = "passwords.pmdb";
@@ -194,12 +275,15 @@ int main() {
                     add_entry(db);
                     break;
                 case 3:
-                    find_entries(db);
+                    edit_entry(db);
                     break;
                 case 4:
+                    find_entries(db);
+                    break;
+                case 5:
                     remove_entry(db);
                     break;
-                case 5: {
+                case 6: {
                     PasswordPolicy p;
                     std::string lenStr = prompt_line("Length (default 20): ");
                     if (!lenStr.empty()) p.length = static_cast<size_t>(std::stoul(lenStr));
@@ -209,11 +293,11 @@ int main() {
                     std::cout << "Generated password: " << pass << "\n";
                     break;
                 }
-                case 6:
+                case 7:
                     db.save(cfg, master);
                     std::cout << "Saved.\n";
                     break;
-                case 7: {
+                case 8: {
                     // lock: forget db in memory and ask master again
                     db = Database{};
                     std::string newMaster = prompt_master_password();
@@ -222,7 +306,7 @@ int main() {
                     std::cout << "Unlocked.\n";
                     break;
                 }
-                case 8: {
+                case 9: {
                     std::string save = prompt_line("Save before exit? [yes/no]: ");
                     if (save == "yes" || save == "y") {
                         db.save(cfg, master);

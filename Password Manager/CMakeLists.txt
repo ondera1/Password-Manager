@@ -11,6 +11,7 @@ add_executable(pm
 	db_crypto.cpp
 	crypto_gcm.cpp
 	src/password_generator.cpp
+	src/config.cpp
 )
 
 target_include_directories(pm PRIVATE
