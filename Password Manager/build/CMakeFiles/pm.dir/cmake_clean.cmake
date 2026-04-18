@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/pm.dir/db_crypto.cpp.o.d"
   "CMakeFiles/pm.dir/src/cli.cpp.o"
   "CMakeFiles/pm.dir/src/cli.cpp.o.d"
+  "CMakeFiles/pm.dir/src/config.cpp.o"
+  "CMakeFiles/pm.dir/src/config.cpp.o.d"
   "CMakeFiles/pm.dir/src/database.cpp.o"
   "CMakeFiles/pm.dir/src/database.cpp.o.d"
   "CMakeFiles/pm.dir/src/password_generator.cpp.o"

@@ -5,9 +5,33 @@
 #include <atomic>
 #include <mutex>
 #include <chrono>
+#include <thread>
+#include <atomic>
+#include <mutex>
+#include <optional>
 
 #include "database.h"
 #include "password_generator.h"
+#include "config.h"
+
+//// Thread
+
+std::thread saveThread;
+std::atomic<bool> saveInProgress{false};
+std::atomic<bool> saveDone{false};
+std::atomic<bool> saveOk{false};
+std::string saveError;
+std::mutex saveErrMtx;
+
+
+
+
+
+////// --- CLI logic
+
+
+
+
 
 static std::string prompt_line(const std::string& label) {
     std::string s;
@@ -185,6 +209,10 @@ int main() {
     try {
         Database db;
         DatabaseConfig cfg;
+
+        AppConfig appCfg = load_config_or_create_default("config.json");
+        cfg.db_path = appCfg.db_path;
+        cfg.pbkdf2Iterations = appCfg.pbkdf2_iterations;
 
         cfg.db_path = prompt_line("DB path [default passwords.pmdb]: ");
         if (cfg.db_path.empty()) cfg.db_path = "passwords.pmdb";
