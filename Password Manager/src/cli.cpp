@@ -9,10 +9,12 @@
 #include <atomic>
 #include <mutex>
 #include <optional>
+#include <fstream>
 
 #include "database.h"
 #include "password_generator.h"
 #include "config.h"
+#include "kdf_benchmark.h"
 
 //// Thread
 
@@ -204,18 +206,95 @@ static void edit_entry(Database& db) {
 
 
 
+auto start_async_save = [](const Database& dbCurrent, const DatabaseConfig& dbCfg, const std::string& master){
+    if (saveInProgress.load()) {
+        std::cout << "Save already in progress. Please wait.\n";
+        return;
+    }
+
+    if (saveThread.joinable()) saveThread.join();
+
+    Database snapshot;
+
+    snapshot.import_json(dbCurrent.export_json_pretty());
+
+    saveInProgress.store(true);
+    saveDone.store(false);
+    saveOk.store(false);
+
+    {
+        std::lock_guard<std::mutex> lock(saveErrMtx);
+        saveError.clear();
+    }
+
+    std::cout << "Saving...\n";
+
+    saveThread = std::thread([snapshot = std::move(snapshot), dbCfg, master]() mutable {
+        try {
+            snapshot.save(dbCfg, master);
+            saveOk.store(true);
+        } catch (const std::exception& e) {
+            saveOk.store(false);
+            std::lock_guard<std::mutex> lock(saveErrMtx);
+            saveError = e.what();
+        }
+        saveDone.store(true);
+        saveInProgress.store(false);
+    });
+
+    std::cout << "Saved succesfully. \n";
+
+
+
+};
+
+static bool file_exists(const std::string& path) {
+    std::ifstream f(path);
+    return static_cast<bool>(f);
+}
+
+
 
 int main() {
     try {
         Database db;
         DatabaseConfig cfg;
 
-        AppConfig appCfg = load_config_or_create_default("config.json");
+        const std::string configPath = "config.json";
+
+        AppConfig appCfg;
+
+        if (!file_exists(configPath)) {
+            std::cout << "Config file not found: " << configPath << "\n";
+            std::string ans = prompt_line("Run KDF benchmark now? [yes/no]: ");
+
+            if (ans == "yes" || ans == "y") {
+                std::cout << "Benchmarking PBKDF2... please wait.\n";
+                auto r = benchmark_pbkdf2_iterations(350.0);
+
+                appCfg = AppConfig{};
+                appCfg.pbkdf2_iterations = r.recommended_iterations;
+
+                save_config(configPath, appCfg);
+                std::cout << "Config created with benchmarked iterations: "
+                          << appCfg.pbkdf2_iterations
+                          << " (measured ~" << r.measured_ms << " ms)\n";
+            } else {
+                appCfg = AppConfig{}; // default
+                save_config(configPath, appCfg);
+                std::cout << "Default config created: " << configPath << "\n";
+            }
+        } else {
+            appCfg = load_config_or_create_default(configPath);
+            std::cout << "Config loaded: " << configPath << "\n";
+        }
+
         cfg.db_path = appCfg.db_path;
         cfg.pbkdf2Iterations = appCfg.pbkdf2_iterations;
 
-        cfg.db_path = prompt_line("DB path [default passwords.pmdb]: ");
-        if (cfg.db_path.empty()) cfg.db_path = "passwords.pmdb";
+        //DEBUG
+        std::cout << "iterations: " << cfg.pbkdf2Iterations << "\n";
+
 
         std::string master = prompt_master_password();
 
@@ -247,7 +326,7 @@ int main() {
             }
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-            if (locked.load()) {
+            if (locked.load() && choice != 8 || locked.load() && choice != 9) {
                 std::cout << "Session locked due to inactivity. Please re-enter master password.\n";
                 db = Database{}; // clear from memory
 
@@ -294,8 +373,8 @@ int main() {
                     break;
                 }
                 case 7:
-                    db.save(cfg, master);
-                    std::cout << "Saved.\n";
+                    //db.save(cfg, master);
+                    start_async_save(db, cfg, master);
                     break;
                 case 8: {
                     // lock: forget db in memory and ask master again
@@ -309,14 +388,20 @@ int main() {
                 case 9: {
                     std::string save = prompt_line("Save before exit? [yes/no]: ");
                     if (save == "yes" || save == "y") {
-                        db.save(cfg, master);
-                        std::cout << "Saved.\n";
+                        //db.save(cfg, master);
+                        start_async_save(db, cfg, master);
                     }
-                    std::cout << "Bye.\n";
-
+                    
                     running.store(false);
                     if (idleWatcher.joinable()) idleWatcher.join();
-
+                    
+                    if (saveInProgress.load()){
+                        std::cout << "Waiting for save to finish...\n";
+                    }
+                    if (saveThread.joinable()) saveThread.join();
+                    
+                    
+                    std::cout << "Bye.\n";
                     return 0;
                 }
                 default:
