@@ -5,9 +5,7 @@
 #include <atomic>
 #include <mutex>
 #include <chrono>
-#include <thread>
-#include <atomic>
-#include <mutex>
+
 #include <optional>
 #include <fstream>
 
@@ -344,7 +342,6 @@ int main() {
 
         std::string master = prompt_master_password();
 
-        // attempt load; if fail, offer init
         try {
             db.load(cfg, master);
             std::cout << "DB loaded.\n";
@@ -423,7 +420,6 @@ int main() {
                     start_async_save(db, cfg, master);
                     break;
                 case 8: {
-                    // lock: forget db in memory and ask master again
                     db = Database{};
                     std::string newMaster = prompt_master_password();
                     db.load(cfg, newMaster); // throws if wrong

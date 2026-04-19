@@ -1,0 +1,7 @@
+# ninja log v5
+1	341	1776620090723753726	CMakeFiles/pm.dir/crypto_gcm.cpp.obj	857c9614ef6ae6e3
+0	437	1776620090819753725	CMakeFiles/pm.dir/db_crypto.cpp.obj	8fdf331796339f9f
+1	443	1776620090827753725	CMakeFiles/pm.dir/src/kdf_benchmark.cpp.obj	7deb73c78a27fea
+1	631	1776620091015753725	CMakeFiles/pm.dir/src/password_generator.cpp.obj	5e65858d61e9c6c2
+1	3376	1776620093759753719	CMakeFiles/pm.dir/src/config.cpp.obj	996a9c211c02b0b
+0	3768	1776620094151753719	CMakeFiles/pm.dir/src/database.cpp.obj	7db58ab77b8b6435

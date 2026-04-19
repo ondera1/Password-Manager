@@ -4,6 +4,7 @@ project(PasswordManager CXX)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(OpenSSL REQUIRED)
+find_package(Threads REQUIRED)
 
 add_executable(pm 
 	src/cli.cpp
