@@ -9,10 +9,12 @@
 #include <atomic>
 #include <mutex>
 #include <optional>
+#include <fstream>
 
 #include "database.h"
 #include "password_generator.h"
 #include "config.h"
+#include "kdf_benchmark.h"
 
 //// Thread
 
@@ -246,6 +248,11 @@ auto start_async_save = [](const Database& dbCurrent, const DatabaseConfig& dbCf
 
 };
 
+static bool file_exists(const std::string& path) {
+    std::ifstream f(path);
+    return static_cast<bool>(f);
+}
+
 
 
 int main() {
@@ -253,14 +260,41 @@ int main() {
         Database db;
         DatabaseConfig cfg;
 
-        AppConfig appCfg = load_config_or_create_default("config.json");
+        const std::string configPath = "config.json";
+
+        AppConfig appCfg;
+
+        if (!file_exists(configPath)) {
+            std::cout << "Config file not found: " << configPath << "\n";
+            std::string ans = prompt_line("Run KDF benchmark now? [yes/no]: ");
+
+            if (ans == "yes" || ans == "y") {
+                std::cout << "Benchmarking PBKDF2... please wait.\n";
+                auto r = benchmark_pbkdf2_iterations(350.0);
+
+                appCfg = AppConfig{};
+                appCfg.pbkdf2_iterations = r.recommended_iterations;
+
+                save_config(configPath, appCfg);
+                std::cout << "Config created with benchmarked iterations: "
+                          << appCfg.pbkdf2_iterations
+                          << " (measured ~" << r.measured_ms << " ms)\n";
+            } else {
+                appCfg = AppConfig{}; // default
+                save_config(configPath, appCfg);
+                std::cout << "Default config created: " << configPath << "\n";
+            }
+        } else {
+            appCfg = load_config_or_create_default(configPath);
+            std::cout << "Config loaded: " << configPath << "\n";
+        }
+
         cfg.db_path = appCfg.db_path;
         cfg.pbkdf2Iterations = appCfg.pbkdf2_iterations;
 
+        //DEBUG
         std::cout << "iterations: " << cfg.pbkdf2Iterations << "\n";
 
-        cfg.db_path = prompt_line("DB path [default passwords.pmdb]: ");
-        if (cfg.db_path.empty()) cfg.db_path = "passwords.pmdb";
 
         std::string master = prompt_master_password();
 

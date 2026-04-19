@@ -249,6 +249,30 @@ src/database.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pm.dir/build.make CMakeFiles/pm.dir/src/database.cpp.s
 .PHONY : src/database.cpp.s
 
+src/kdf_benchmark.o: src/kdf_benchmark.cpp.o
+.PHONY : src/kdf_benchmark.o
+
+# target to build an object file
+src/kdf_benchmark.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pm.dir/build.make CMakeFiles/pm.dir/src/kdf_benchmark.cpp.o
+.PHONY : src/kdf_benchmark.cpp.o
+
+src/kdf_benchmark.i: src/kdf_benchmark.cpp.i
+.PHONY : src/kdf_benchmark.i
+
+# target to preprocess a source file
+src/kdf_benchmark.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pm.dir/build.make CMakeFiles/pm.dir/src/kdf_benchmark.cpp.i
+.PHONY : src/kdf_benchmark.cpp.i
+
+src/kdf_benchmark.s: src/kdf_benchmark.cpp.s
+.PHONY : src/kdf_benchmark.s
+
+# target to generate assembly for a file
+src/kdf_benchmark.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pm.dir/build.make CMakeFiles/pm.dir/src/kdf_benchmark.cpp.s
+.PHONY : src/kdf_benchmark.cpp.s
+
 src/password_generator.o: src/password_generator.cpp.o
 .PHONY : src/password_generator.o
 
@@ -297,6 +321,9 @@ help:
 	@echo "... src/database.o"
 	@echo "... src/database.i"
 	@echo "... src/database.s"
+	@echo "... src/kdf_benchmark.o"
+	@echo "... src/kdf_benchmark.i"
+	@echo "... src/kdf_benchmark.s"
 	@echo "... src/password_generator.o"
 	@echo "... src/password_generator.i"
 	@echo "... src/password_generator.s"

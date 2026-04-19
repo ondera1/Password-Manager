@@ -12,6 +12,7 @@ add_executable(pm
 	crypto_gcm.cpp
 	src/password_generator.cpp
 	src/config.cpp
+	src/kdf_benchmark.cpp
 )
 
 target_include_directories(pm PRIVATE
