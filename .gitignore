@@ -383,3 +383,4 @@ out/
 cmake-build-*/
 
 *.pmdb
+*.json
