@@ -158,13 +158,13 @@ CMakeFiles/pm.dir/src/cli.cpp.o: \
  /usr/include/c++/11/bits/atomic_base.h \
  /usr/include/c++/11/bits/atomic_lockfree_defines.h \
  /usr/include/c++/11/mutex /usr/include/c++/11/bits/std_mutex.h \
- /usr/include/c++/11/bits/unique_lock.h \
+ /usr/include/c++/11/bits/unique_lock.h /usr/include/c++/11/optional \
+ /usr/include/c++/11/bits/enable_special_members.h \
  /home/ondera1/cpp/PasswordManager/Password-Manager/Password\ Manager/src/database.h \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_uninitialized.h \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
- /usr/include/c++/11/bits/vector.tcc /usr/include/c++/11/optional \
- /usr/include/c++/11/bits/enable_special_members.h \
+ /usr/include/c++/11/bits/vector.tcc \
  /home/ondera1/cpp/PasswordManager/Password-Manager/Password\ Manager/src/entry.h \
  /home/ondera1/cpp/PasswordManager/Password-Manager/Password\ Manager/src/password_generator.h \
  /usr/include/c++/11/cstddef \
