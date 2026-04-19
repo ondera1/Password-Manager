@@ -5,9 +5,7 @@
 #include <atomic>
 #include <mutex>
 #include <chrono>
-#include <thread>
-#include <atomic>
-#include <mutex>
+
 #include <optional>
 #include <fstream>
 
@@ -57,6 +55,7 @@ static void print_menu() {
               << "7) Save\n"
               << "8) Lock (re-enter master password)\n"
               << "9) Exit\n"
+              << "10) Change master password\n"
               << "Choice: ";
 }
 
@@ -253,6 +252,51 @@ static bool file_exists(const std::string& path) {
     return static_cast<bool>(f);
 }
 
+static bool change_master_password (Database& db, const DatabaseConfig& cfg, std::string& master) {
+    std::string current = prompt_line("Current master password: ");
+
+    if (current != master) {
+        try {
+            Database probe;
+            probe.load(cfg, current);
+        }
+        catch (const std::exception& e) {
+            std::cout << "Incorrect master password.\n";
+            return false;
+        }
+
+    }
+
+    std::string p1 = prompt_line("New master password: ");
+    std::string p2 = prompt_line("Repeat new master password: ");
+    
+    if (p1.empty()) {
+        std::cout << "Master password cannot be empty.\n";
+        return false;
+    }
+
+    if (p1 != p2) {
+        std::cout << "Passwords do not match.\n";
+        return false;
+    }
+
+    if (p1 == master) {
+        std::cout << "New master password is the same as the current one.\n";
+        return false;
+    }
+
+    try {
+        db.save(cfg, p1);
+        master = std::move(p1);
+        std::cout << "Master password changed successfully.\n";
+        return true;
+    } catch (const std::exception& e) {
+        std::cout << "Failed to save with new master password: " << e.what() << "\n";
+        return false;
+    }
+
+}
+
 
 
 int main() {
@@ -298,7 +342,6 @@ int main() {
 
         std::string master = prompt_master_password();
 
-        // attempt load; if fail, offer init
         try {
             db.load(cfg, master);
             std::cout << "DB loaded.\n";
@@ -326,7 +369,7 @@ int main() {
             }
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-            if (locked.load() && choice != 8 || locked.load() && choice != 9) {
+            if (locked.load() && !(choice == 8 || choice == 9)) {
                 std::cout << "Session locked due to inactivity. Please re-enter master password.\n";
                 db = Database{}; // clear from memory
 
@@ -377,7 +420,6 @@ int main() {
                     start_async_save(db, cfg, master);
                     break;
                 case 8: {
-                    // lock: forget db in memory and ask master again
                     db = Database{};
                     std::string newMaster = prompt_master_password();
                     db.load(cfg, newMaster); // throws if wrong
@@ -403,6 +445,10 @@ int main() {
                     
                     std::cout << "Bye.\n";
                     return 0;
+                }
+                case 10: {
+                    change_master_password(db, cfg, master);
+                    break;
                 }
                 default:
                     std::cout << "Unknown choice.\n";

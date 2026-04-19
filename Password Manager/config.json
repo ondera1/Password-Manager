@@ -1,6 +1,6 @@
 {
   "db_path": "passwords.pmdb",
   "idle_timeout_seconds": 120,
-  "pbkdf2_iterations": 1739057,
+  "pbkdf2_iterations": 1741621,
   "theme": "default"
 }
