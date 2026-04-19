@@ -381,3 +381,5 @@ CMakeUserPresets.json
 build/
 out/
 cmake-build-*/
+
+*.pmdb
