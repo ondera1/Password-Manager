@@ -239,9 +239,9 @@ auto start_async_save = [](const Database& dbCurrent, const DatabaseConfig& dbCf
         }
         saveDone.store(true);
         saveInProgress.store(false);
+        std::cout << "Saved succesfully. \n";
     });
 
-    std::cout << "Saved succesfully. \n";
 
 
 
